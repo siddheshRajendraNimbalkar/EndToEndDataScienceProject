@@ -1,0 +1,108 @@
+import os 
+import yaml
+from src.EndToEndDataScienceProject import logger
+
+import json
+import joblib
+from ensure import ensure_annotations
+from box import ConfigBox
+from pathlib import Path
+from typing import Any
+from box.exceptions import BoxValueError
+
+@ensure_annotations
+def read_yaml(path_to_yaml: str) -> ConfigBox:
+    """Reads a YAML file and returns its contents as a ConfigBox.
+
+    Args:
+        path_to_yaml (str): The path to the YAML file.
+
+    Raises:
+        ValueError: If the provided path does not point to a YAML file.
+
+    Returns:
+        ConfigBox: The contents of the YAML file as a ConfigBox.
+    """
+    try:
+        with open(path_to_yaml) as yaml_file:
+            content = yaml.safe_load(yaml_file)
+            logger.info(f"YAML file {path_to_yaml} loaded successfully.")
+            return ConfigBox(content)
+    except BoxValueError:
+        raise ValueError("yaml file is empty or invalid")
+    except Exception as e:
+        raise e
+
+
+@ensure_annotations
+def craete_directories(path_to_directories: list, verbose=True):
+    """
+        Create list of directories
+
+    Args:
+        path_to_directories (list): List of directory paths to create.
+        verbose (bool, optional): If True, logs the creation of each directory. Defaults to True.
+    """
+    for path in path_to_directories:
+        os.makedirs(path, exist_ok=True)
+        if verbose:
+            logger.info(f"Directory created at: {path}")
+
+@ensure_annotations
+def save_json(path: Path, data: dict):
+    """
+    Save JSON Data
+    
+    
+    Args:
+        path (Path): Path to JSON file
+        data (dict): Data to be saved in JSON file
+    """
+    with open(path, "w") as f:
+        json.dump(data, f, indent=4)
+        
+    logger.info(f"JSON data saved at: {path}")
+
+@ensure_annotations
+def load_json(path: Path) -> ConfigBox:
+    """
+    Load JSON FILE Data
+    
+    Args:
+        path (Path): Path to JSON file
+        
+    Returns:
+        ConfigBox: Contents of the JSON file as a ConfigBox
+    """
+    with open(path, "r") as f:
+        content = json.load(f)
+        
+    logger.info(f"JSON data loaded from: {path}")
+    return ConfigBox(content)
+
+@ensure_annotations
+def save_bin(data: Any, path: Path):
+    """
+    Save binary file
+
+    Args:
+        data (Any): Data to be saved in binary format
+        path (Path): Path to the binary file
+    """
+    joblib.dump(data, path)
+    logger.info(f"Binary file saved at: {path}")
+
+@ensure_annotations
+def load_bin(path: Path) -> Any:
+    """
+    Load binary file
+
+    Args:
+        path (Path): Path to the binary file
+
+    Returns:
+        Any: Contents of the binary file
+    """
+    data = joblib.load(path)
+    logger.info(f"Binary file loaded from: {path}")
+    return data
