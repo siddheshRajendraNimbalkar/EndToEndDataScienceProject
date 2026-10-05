@@ -11,7 +11,7 @@ from typing import Any
 from box.exceptions import BoxValueError
 
 @ensure_annotations
-def read_yaml(path_to_yaml: str) -> ConfigBox:
+def read_yaml(path_to_yaml: Path) -> ConfigBox:
     """Reads a YAML file and returns its contents as a ConfigBox.
 
     Args:
@@ -35,7 +35,7 @@ def read_yaml(path_to_yaml: str) -> ConfigBox:
 
 
 @ensure_annotations
-def craete_directories(path_to_directories: list, verbose=True):
+def create_directories(path_to_directories: list, verbose=True):
     """
         Create list of directories
 
